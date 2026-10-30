@@ -1,0 +1,18 @@
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+const b=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});const p=await b.newPage({viewport:{width:1440,height:960}});const errors=[];p.on('pageerror',e=>errors.push(e.message));
+await p.goto('http://localhost:5173');await p.waitForTimeout(1200);
+await p.evaluate(()=>{const s=JSON.parse(localStorage.getItem('home-planner-v1'));const w=s.layout.items.find(i=>i.type==='wardrobe');w.name='Measured wardrobe (depth estimated)';delete w.fixed;for(const i of s.layout.items.filter(i=>i.type==='doorway'||i.name.includes('hallway')||i.name.includes('Hallway')))delete i.fixed;localStorage.setItem('home-planner-v1',JSON.stringify(s));});
+await p.reload();await p.waitForTimeout(700);
+let state=await p.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));let w=state.layout.items.find(i=>i.type==='wardrobe');assert.equal(w.fixed,true);const start=[w.x,w.z];
+await p.getByRole('button',{name:'Bathroom hall',exact:true}).click();await p.waitForTimeout(500);await p.screenshot({path:'/workspace/home-bathroom-hall.png'});await p.getByRole('button',{name:'Floor plan',exact:true}).click();await p.waitForTimeout(1000);
+await p.mouse.move(850,430);await p.mouse.down();await p.mouse.move(900,470,{steps:8});await p.mouse.up();await p.waitForTimeout(400);
+state=await p.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));w=state.layout.items.find(i=>i.type==='wardrobe');assert.deepEqual([w.x,w.z],start);await p.getByText('Fixed in place',{exact:true}).waitFor();
+await p.screenshot({path:'/workspace/home-fixed-wardrobe.png'});await p.getByRole('button',{name:'Unlock to reposition'}).click();await p.getByRole('spinbutton',{name:'Position X'}).fill('-0.1');await p.getByRole('button',{name:'Fix in place',exact:true}).click();
+state=await p.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));w=state.layout.items.find(i=>i.type==='wardrobe');assert.equal(w.x,-.1);assert.equal(w.fixed,true);
+await p.getByRole('button',{name:'Close furniture settings'}).click();await p.getByRole('button',{name:'Reset camera'}).click();await p.waitForTimeout(500);
+const bedBefore=state.layout.items.find(i=>i.type==='divan');await p.mouse.move(1000,430);await p.mouse.down();await p.mouse.move(970,450,{steps:8});await p.mouse.up();await p.waitForTimeout(500);
+state=await p.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));const bedAfter=state.layout.items.find(i=>i.type==='divan');assert.ok(bedAfter.x!==bedBefore.x||bedAfter.z!==bedBefore.z,'Bed should remain draggable');
+await p.getByRole('button',{name:'Room',exact:true}).click();await p.getByRole('spinbutton',{name:'Room width'}).fill('3');await p.getByText('The room is too small for a fixed fixture.',{exact:false}).waitFor();
+state=await p.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));assert.equal(state.layout.room.width,4);await p.reload();state=await p.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));assert.equal(state.layout.items.find(i=>i.type==='wardrobe').fixed,true);
+assert.deepEqual(errors,[]);console.log('Fixed wardrobe, older layout migration, unlock/relock, movable bed, room bounds and persistence: passed.');await b.close();

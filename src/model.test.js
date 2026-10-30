@@ -73,3 +73,31 @@ test('home reference places the bed head against the wardrobe back with the kitc
  const wardrobeAisleEdge=wardrobe.x-wardrobe.size[2]/2;
  assert.ok(wardrobeAisleEdge-fridgeAisleEdge>=.6);
 });
+
+test('photo reference wardrobes are fixed and keep their position through a room resize and JSON round trip',async()=>{
+ const {homeReference,photoReference}=await import('./model.js');
+ for (const layout of [homeReference(),photoReference()]) {
+  const wardrobe=layout.items.find(i=>i.type==='wardrobe');
+  assert.equal(wardrobe.fixed,true);
+  const smallerRoom={...layout.room,width:2,depth:2};
+  assert.deepEqual(constrain(wardrobe,smallerRoom),wardrobe);
+  assert.equal(validate(JSON.parse(JSON.stringify(layout))).items.find(i=>i.id===wardrobe.id).fixed,true);
+ }
+});
+test('older layouts without fixed fields load as movable and invalid lock flags are rejected',()=>{
+ const old=initial();delete old.items[0].fixed;
+ assert.equal(validate(old).items[0].fixed,false);
+ old.items[0].fixed='false';assert.throws(()=>validate(old),/fixed/);
+ old.items[0].fixed=null;assert.throws(()=>validate(old),/fixed/);
+});
+
+test('old photo reference fixtures upgrade in place without changing other furniture',async()=>{
+ const {homeReference}=await import('./model.js');const l=homeReference();
+ const wardrobe=l.items.find(i=>i.type==='wardrobe');wardrobe.name='Measured wardrobe (depth estimated)';delete wardrobe.fixed;wardrobe.x=.15;
+ const doorway=l.items.find(i=>i.type==='doorway');doorway.name='Side doorway (location estimated)';delete doorway.fixed;
+ const bed=l.items.find(i=>i.type==='divan');delete bed.fixed;
+ const restored=validate(l);const upgraded=restored.items.find(i=>i.id===wardrobe.id);
+ assert.equal(upgraded.fixed,true);assert.equal(upgraded.x,.15);assert.equal(restored.items.find(i=>i.id===doorway.id).fixed,true);
+ assert.equal(restored.items.find(i=>i.id===bed.id).fixed,false);
+ upgraded.fixed=false;assert.equal(validate(restored).items.find(i=>i.id===wardrobe.id).fixed,false);
+});
