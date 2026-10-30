@@ -33,3 +33,29 @@ test('import rejects malformed photo finish controls',()=>{
  const l=initial();l.room.windowEnabled='false';assert.throws(()=>validate(l));
  l.room.windowEnabled=false;l.room.doorColor='invalid';assert.throws(()=>validate(l));
 });
+
+test('full home reference preserves measured wardrobe, new furniture and separate windows',async()=>{
+ const {homeReference}=await import('./model.js');const l=homeReference();
+ assert.deepEqual(validate(JSON.parse(JSON.stringify(l))),l);
+ assert.equal(l.room.height,2.45);
+ assert.equal(l.reference,'home-photos-2');
+ assert.equal(l.room.secondWindowEnabled,true);
+ assert.notEqual(l.room.windowWall,l.room.secondWindowWall);
+ assert.deepEqual(l.items.find(i=>i.type==='wardrobe').size,[1.59,1.99,.55]);
+ assert.equal(l.items.find(i=>i.type==='wallcabinet').elevation,1.5);
+ for(const type of ['sink','cabinet','fridge','sofa','ottoman','divan','doorway'])assert.ok(l.items.some(i=>i.type===type));
+ for(const i of l.items)assert.deepEqual(constrain(i,l.room),i);
+});
+test('second opening must stay inside room and cannot share an occupied wall',async()=>{
+ const {homeReference}=await import('./model.js');const l=homeReference();
+ l.room.secondWindowWidth=30;l.room.secondWindowOffset=100;l.room.secondWindowHeight=20;
+ const r=normalizeRoom(l.room);
+ assert.ok(r.secondWindowWidth<=r.width-.2);
+ assert.ok(r.secondWindowOffset+r.secondWindowWidth/2<=r.width/2);
+ assert.ok(r.secondWindowSill+r.secondWindowHeight<=r.height);
+ l.room.secondWindowWall=l.room.doorWall;assert.throws(()=>validate(l));
+});
+test('invalid elevations and coverings are rejected',()=>{
+ const l=initial();l.items[0].elevation=NaN;assert.throws(()=>validate(l));
+ l.items[0].elevation=0;l.room.secondWindowCover='bad';assert.throws(()=>validate(l));
+});

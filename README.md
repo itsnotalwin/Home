@@ -11,12 +11,12 @@ npm ci
 npm run dev
 ```
 
-`npm test` runs data validation and geometry tests. `npm run build` creates the static production site in `dist`. `npm run preview` serves that build. For the browser smoke check, run the dev server, then `npx playwright install chromium` and `node smoke.mjs`. Run `node photo-smoke.mjs` to check photo-reference loading, backups, undo/redo and mobile controls (screenshots are written to `/workspace`).
+`npm test` runs data validation and geometry tests. `npm run build` creates the static production site in `dist`. `npm run preview` serves that build. For the browser smoke check, run the dev server, then `npx playwright install chromium` and `node smoke.mjs`. Run `node home-smoke.mjs` for the full-home reference, multiple windows and elevated cabinets. Run `node photo-smoke.mjs` to check photo-reference loading, backups, undo/redo and mobile controls (screenshots are written to `/workspace`).
 
 ## Design your room
 
-- **Furniture:** add beds, desks, wardrobes, shelves, chairs, tables, rugs, plants, lamps and custom objects. Select and drag objects; use the inspector to enter exact dimensions, position, rotation and colour, replace a piece, duplicate it or remove it.
-- **Room:** set width, depth, height, wall/floor colours, floor material and lighting. Set the wall, dimensions and centre offset for one door and an optional window. All measurements use metres. Door and window must occupy separate walls. Room size is 2–20 m; window and door dimensions adapt to the available wall space.
+- **Furniture:** add beds, desks, wardrobes, shelves, chairs, tables, rugs, plants, lamps, kitchen base/sink cabinets, overhead cupboards, fridge freezers, sofas, ottomans, doorway markers and custom objects. Elevation positions overhead cupboards above the floor. Select and drag objects; use the inspector to enter exact dimensions, position, rotation and colour, replace a piece, duplicate it or remove it.
+- **Room:** set width, depth, height, wall/floor colours, floor material and lighting. Set the wall, dimensions and centre offset for one door and up to two optional windows. Each window can have blinds or curtains. All measurements use metres. Enabled openings must occupy separate walls. Room size is 2–20 m; window and door dimensions adapt to the available wall space.
 - **3D edit:** drag the background to orbit, scroll/pinch to zoom; drag furniture to move it. Snap rounds movement to 10 cm. Furniture positions are constrained to the room's rotated footprint; objects larger than the room can still extend beyond it.
 - **Floor plan:** overhead view, drag pieces and pan/zoom. The edit view hides front and right walls; walkthrough renders all four walls. The door can be displayed as an open doorway or a closed decorative leaf. Its swing is not simulated.
 - **Walkthrough:** WASD or arrow keys to move; drag to look. Mobile has directional buttons. Movement stays inside room boundaries but intentionally passes through furniture; this is a visual exploration tool, not a collision simulator.
@@ -27,7 +27,13 @@ The starter bedroom is illustrative. **Room → Load photo reference** loads a s
 
 The reference uses the visible annotations: **2.45 m** floor-to-ceiling, **3.83 m** wall span (used as room depth), and **1.59 m wide × 1.99 m high** wardrobe. The owner identified the visible white surface as the wardrobe's back; the wardrobe faces away from the bed. It also includes a grey divan bed, cream walls, beige tiled floor, brown closed door and dark skirting. A window is hidden because its position is not established by these photos; it can be enabled in Room settings.
 
-**Explicit placeholders:** 3.00 m room width, 0.55 m wardrobe depth, 1.37 × 1.88 m bed footprint, 0.80 × 2.05 m door, 0.50 m floor tiles, and all furniture/opening positions. Colours are visual approximations. These are not surveyed dimensions. The reference card and scene caption identify the uncertainty; measurements and pieces remain editable. The source photos are not bundled in the public app. Models are editable procedural furniture, not photorealistic scans. This version supports a rectangular room with one door and an optional window.
+**Explicit placeholders:** 3.00 m room width, 0.55 m wardrobe depth, 1.37 × 1.88 m bed footprint, 0.80 × 2.05 m door, 0.50 m floor tiles, and all furniture/opening positions. Colours are visual approximations. These are not surveyed dimensions. The reference card and scene caption identify the uncertainty; measurements and pieces remain editable. The source photos are not bundled in the public app. Models are editable procedural furniture, not photorealistic scans. This version supports a rectangular envelope with one door and up to two windows on separate walls.
+
+## Full home reference from six photos
+
+**Room → Load home reference** adds a separate, editable interpretation of the six supplied photos. It includes the L-shaped kitchen, sink below a blind-covered window, fridge, overhead cupboard, central passage, wardrobe divider with its back towards the bed, brown sofa/ottoman, and a second window with curtains. The partially visible side doorway is represented by a marker and partitions; no interior is claimed for the room beyond it. The original two-photo bedroom reference remains available under **Earlier bedroom reference**. Loading either reference backs up the current layout.
+
+The ceiling height (2.45 m) and wardrobe width/height (1.59 × 1.99 m) retain their photo annotations. **The overall 4.60 × 6.40 m envelope is an explicit placeholder, not a measured floor plan.** The 3.83 m bedroom wall annotation is retained in the separate bedroom reference and is not treated as the whole home's length. All other dimensions, fixture heights, opening positions and zone arrangements are editable visual estimates. The UI identifies these assumptions, and both references survive JSON export/import.
 
 ## Storage and privacy
 

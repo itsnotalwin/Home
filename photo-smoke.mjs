@@ -4,6 +4,7 @@ const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enabl
 const page=await browser.newPage({viewport:{width:1440,height:960}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://localhost:5173');
 await page.getByRole('button',{name:'Room',exact:true}).click();
+await page.getByText('Earlier bedroom reference',{exact:true}).click();
 const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')).layout);
 await page.getByRole('button',{name:'Load photo reference',exact:true}).click();
 await page.getByText('Photo reference · some dimensions estimated',{exact:true}).waitFor();
@@ -27,5 +28,5 @@ await page.getByLabel('Show closed door',{exact:true}).check();
 await page.getByRole('button',{name:'Walkthrough',exact:true}).click();await page.waitForTimeout(500);await page.screenshot({path:'/workspace/home-photo-walk.png'});
 await page.getByRole('button',{name:'3D edit',exact:true}).click();
 await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Design your room'}).click();
-await page.getByRole('button',{name:'Room',exact:true}).click();await page.getByRole('button',{name:'Load photo reference',exact:true}).click();await page.getByRole('button',{name:'Close panel',exact:true}).click();await page.waitForTimeout(500);await page.screenshot({path:'/workspace/home-photo-mobile.png'});
+await page.getByRole('button',{name:'Room',exact:true}).click();await page.getByText('Earlier bedroom reference',{exact:true}).click();await page.getByRole('button',{name:'Load photo reference',exact:true}).click();await page.getByRole('button',{name:'Close panel',exact:true}).click();await page.waitForTimeout(500);await page.screenshot({path:'/workspace/home-photo-mobile.png'});
 assert.deepEqual(errors,[]);console.log('Photo reference, backup, undo/redo, finish controls, persistence and mobile: passed.');await browser.close();
