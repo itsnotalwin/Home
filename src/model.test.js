@@ -59,3 +59,17 @@ test('invalid elevations and coverings are rejected',()=>{
  const l=initial();l.items[0].elevation=NaN;assert.throws(()=>validate(l));
  l.items[0].elevation=0;l.room.secondWindowCover='bad';assert.throws(()=>validate(l));
 });
+
+test('home reference places the bed head against the wardrobe back with the kitchen across the aisle',async()=>{
+ const {homeReference}=await import('./model.js');const {items}=homeReference();
+ const wardrobe=items.find(i=>i.type==='wardrobe'),bed=items.find(i=>i.type==='divan'),fridge=items.find(i=>i.type==='fridge');
+ // The wardrobe doors face the aisle on -X; the wide back faces the bed on +X.
+ assert.equal(wardrobe.rotation,270);
+ assert.equal(bed.rotation,90);
+ assert.ok(Math.abs(wardrobe.z-bed.z)<=(wardrobe.size[0]-bed.size[0])/2);
+ const back=wardrobe.x+wardrobe.size[2]/2, head=bed.x-bed.size[2]/2;
+ assert.ok(head>=back-.01&&head<=back+.1);
+ const fridgeAisleEdge=fridge.x+fridge.size[2]/2;
+ const wardrobeAisleEdge=wardrobe.x-wardrobe.size[2]/2;
+ assert.ok(wardrobeAisleEdge-fridgeAisleEdge>=.6);
+});

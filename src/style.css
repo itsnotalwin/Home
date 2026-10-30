@@ -4,3 +4,5 @@
 .reference-card{background:#edf2e6;border:1px solid #dce5d2;border-radius:9px;padding:14px;margin:18px 0}.reference-card h3{margin:7px 0 10px}.reference-card p{font-size:11px;line-height:1.7;color:#66765c}.reference-card small{font-size:10px;color:#78866d}.reference-card button{font-size:11px}.toggle-field{display:flex;gap:8px;align-items:center;margin:13px 0;font-size:11px}
 
 .earlier-reference{margin:16px 0;color:#6d7b63;font-size:11px}.earlier-reference summary{cursor:pointer;padding:6px 0}.earlier-reference .reference-card{margin-top:8px}
+
+.viewpoints{position:absolute;bottom:62px;right:22px;display:flex;gap:3px;padding:4px;background:#f9faf6ed;border:1px solid #dfe4d8;border-radius:10px;box-shadow:0 4px 20px #414b3810}.viewpoints button{font-size:10px;border:0;background:transparent;padding:8px}.viewpoints button.active{background:#fff;color:#315b45;box-shadow:0 1px 5px #39452e20}@media(max-width:720px){.viewpoints{bottom:113px;right:12px}.viewpoints button{font-size:9px;padding:7px}}

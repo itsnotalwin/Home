@@ -47,23 +47,23 @@ export function photoReference(){
 // Six-photo interpretation: dimensions not annotated in the photos are placeholders.
 // Preserve the original bedroom reference rather than treating 3.83 m as the full home span.
 export function homeReference(){
- const room=normalizeRoom({...photoReference().room,width:4.6,depth:6.4,
-  doorWall:'right',doorOffset:-1.6,windowEnabled:true,windowWall:'back',windowOffset:-1.25,
+ const room=normalizeRoom({...photoReference().room,width:4.0,depth:5.2,
+  doorWall:'right',doorOffset:-.65,windowEnabled:true,windowWall:'back',windowOffset:-1.25,
   windowWidth:1.25,windowHeight:1.25,windowSill:1.05,windowCover:'blinds',
   secondWindowEnabled:true,secondWindowWall:'front',secondWindowOffset:-.95,
   secondWindowWidth:1.6,secondWindowHeight:1.2,secondWindowSill:1,secondWindowCover:'curtain'
  });
  return {version:1,name:'My home · photo reference',reference:'home-photos-2',room,items:[
-  makeItem('sink',{name:'Kitchen sink (estimated)',x:-1.25,z:-2.88}),
-  makeItem('cabinet',{name:'Kitchen counter (estimated)',size:[1.3,.9,.6],x:-1.98,z:-1.9,rotation:90}),
-  makeItem('wallcabinet',{name:'Kitchen wall cupboard (estimated)',size:[1.3,.7,.32],x:-2.12,z:-1.9,rotation:90}),
-  makeItem('fridge',{name:'Fridge freezer (estimated)',x:-1.95,z:-.85,rotation:90}),
-  makeItem('wardrobe',{name:'Measured wardrobe (depth estimated)',size:[1.59,1.99,.55],color:'#ebe8d8',x:.1,z:-.9,rotation:270}),
-  makeItem('divan',{name:'Grey bed (estimated)',x:1.34,z:-.9,rotation:90}),
-  makeItem('sofa',{name:'Brown sofa (estimated)',x:-1.85,z:1.6,rotation:90}),
-  makeItem('ottoman',{name:'Matching ottoman (estimated)',x:-1.85,z:2.8}),
-  makeItem('doorway',{name:'Side doorway (location estimated)',x:.8,z:-1.9}),
-  makeItem('custom',{name:'Side partition (estimated)',size:[1.1,2.45,.1],color:'#eee9d9',x:1.75,z:-1.9}),
-  makeItem('custom',{name:'Passage partition (estimated)',size:[.1,2.45,1.3],color:'#eee9d9',x:.3,z:-2.55})
+  makeItem('sink',{name:'Kitchen sink (estimated)',x:-1.25,z:-2.3}),
+  makeItem('cabinet',{name:'Kitchen counter (estimated)',size:[1.3,.9,.6],x:-1.7,z:-1.55,rotation:90}),
+  makeItem('wallcabinet',{name:'Kitchen wall cupboard (estimated)',size:[1.3,.7,.32],x:-1.84,z:-1.55,rotation:90}),
+  makeItem('fridge',{name:'Fridge freezer (estimated)',x:-1.65,z:-.5,rotation:90}),
+  makeItem('wardrobe',{name:'Measured wardrobe (depth estimated)',size:[1.59,1.99,.55],color:'#ebe8d8',x:-.17,z:-.7,rotation:270}),
+  makeItem('divan',{name:'Grey bed (estimated)',x:1.05,z:-.7,rotation:90}),
+  makeItem('sofa',{name:'Brown sofa (estimated)',x:-1.55,z:1.05,rotation:90}),
+  makeItem('ottoman',{name:'Matching ottoman (estimated)',x:-1.65,z:2.225}),
+  makeItem('doorway',{name:'Side doorway (location estimated)',x:.38,z:-1.75}),
+  makeItem('custom',{name:'Side partition (estimated)',size:[1.1,2.45,.1],color:'#eee9d9',x:1.38,z:-1.75}),
+  makeItem('custom',{name:'Passage partition (estimated)',size:[.1,2.45,.85],color:'#eee9d9',x:-.17,z:-2.175})
  ].map(i=>constrain(i,room))};
 }

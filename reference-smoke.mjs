@@ -1,0 +1,17 @@
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
+const page=await browser.newPage({viewport:{width:1440,height:960}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto('http://localhost:5174');await page.waitForTimeout(1200);
+let state=await page.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));
+assert.equal(state.layout.reference,'home-photos-2');assert.equal(state.layout.room.width,4);assert.equal(state.layout.room.depth,5.2);
+await page.screenshot({path:'/workspace/home-corrected-overview.png'});
+await page.getByRole('button',{name:'Bed & wardrobe',exact:true}).click();await page.waitForTimeout(600);await page.screenshot({path:'/workspace/home-corrected-bed.png'});
+await page.getByRole('button',{name:'From kitchen',exact:true}).click();await page.waitForTimeout(600);await page.screenshot({path:'/workspace/home-corrected-kitchen.png'});
+await page.getByRole('button',{name:'Floor plan',exact:true}).click();await page.waitForTimeout(600);await page.screenshot({path:'/workspace/home-corrected-plan.png'});
+await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('home-planner-v1'));s.layout.name='My previous working room';s.saved=[{id:'saved-before',name:'Existing saved layout',date:123,layout:structuredClone(s.layout)}];delete s.referenceVersion;localStorage.setItem('home-planner-v1',JSON.stringify(s));});
+await page.reload();state=await page.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));
+assert.equal(state.layout.reference,'home-photos-2');assert.equal(state.referenceVersion,2);assert.equal(state.saved.length,2);assert.equal(state.saved[0].name,'Existing saved layout');assert.equal(state.saved[1].layout.name,'My previous working room');
+await page.getByRole('button',{name:'Room',exact:true}).click();await page.getByRole('spinbutton',{name:'Room width'}).fill('4.2');await page.reload();state=await page.evaluate(()=>JSON.parse(localStorage.getItem('home-planner-v1')));assert.equal(state.layout.room.width,4.2);assert.equal(state.saved.length,2);
+await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Bed & wardrobe',exact:true}).click();await page.waitForTimeout(600);await page.screenshot({path:'/workspace/home-corrected-mobile.png'});
+assert.deepEqual(errors,[]);console.log('Default reference, three viewpoints, migration backup, saved layouts and subsequent edits: passed.');await browser.close();
